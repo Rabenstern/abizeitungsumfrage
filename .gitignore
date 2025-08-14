@@ -5,6 +5,9 @@
 # logs
 *.log
 
+# dotenv
+.env
+
 # input files and db
 *.csv
 *.db
