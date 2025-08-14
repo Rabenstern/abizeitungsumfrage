@@ -1,0 +1,14 @@
+:root {
+    --bg: #000;
+    --fg: #fff;
+    --hl: #f00;
+}
+
+body {
+    color: var(--fg);
+    background-color: var(--bg);
+}
+
+h1 {
+    background-color: var(--hl);
+}
