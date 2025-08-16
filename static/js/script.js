@@ -1,5 +1,5 @@
 function get_hello() {
-     fetch('/api/hello')
+     fetch('/api')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -14,7 +14,7 @@ async function post_hello() {
     const data = {message: "Saljutations!"};
     console.log(JSON.stringify(data));
     try {
-        const response = await fetch("/api/greet", {
+        const response = await fetch("/api", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

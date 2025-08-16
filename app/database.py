@@ -89,3 +89,11 @@ def setup_teachers():
 
     session.commit()
     session.close()
+
+
+def get_student_by_email(email: str):
+    log.info("searching for user with email")
+
+    session = SessionLocal()
+
+    return session.query(Student).filter(Student.email == email).first()
