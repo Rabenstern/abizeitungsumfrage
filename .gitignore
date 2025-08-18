@@ -1,13 +1,10 @@
-# python
-**/__pycache__
-.venv
-
-# logs
-*.log
-
-# dotenv
-.env
-
 # input files and db
 *.csv
 *.db
+*.log
+.env
+
+
+# Added by cargo
+
+/target
