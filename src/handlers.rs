@@ -25,17 +25,20 @@ pub async fn get_students(query: web::Query<StudentsQuery>) -> Result<HttpRespon
 
     let mut res = Vec::new();
 
-    if query.email.is_empty() {
-        res = students
-            .iter()
-            .map(|s| StudentSafe::from_student(s))
-            .collect();
-    } else {
-        let filtered: Vec<&Student> = students.iter().filter(|s| s.email == query.email).collect();
-        res = filtered
-            .iter()
-            .map(|s| StudentSafe::from_student(s))
-            .collect();
+    match query.email {
+        Some(m) => {
+            let filtered: Vec<&Student> = students.iter().filter(|s| s.email == m).collect();
+            res = filtered
+                .iter()
+                .map(|s| StudentSafe::from_student(s))
+                .collect();
+        }
+        None => {
+            res = students
+                .iter()
+                .map(|s| StudentSafe::from_student(s))
+                .collect();
+        }
     }
 
     Ok(HttpResponse::Ok().json(res))

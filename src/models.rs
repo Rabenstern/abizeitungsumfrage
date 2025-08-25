@@ -11,7 +11,7 @@ pub struct PostMessage {
 
 #[derive(Serialize, Deserialize)]
 pub struct StudentsQuery {
-    pub email: String,
+    pub email: Option<String>,
 }
 
 #[derive(Queryable, Serialize)]
@@ -83,7 +83,6 @@ pub struct Teacher {
 #[derive(Queryable, Insertable, Serialize, Deserialize)]
 #[diesel(table_name = teacher)]
 pub struct NewTeacher {
-    pub id: i32,
     pub first_name: String,
     pub last_name: String,
 }
