@@ -1,3 +1,0 @@
-"""
-api/dependencies.py
-"""
