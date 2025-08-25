@@ -32,6 +32,12 @@ async fn main() -> std::io::Result<()> {
             .route("/api/students/{id}", web::get().to(get_student))
             .route("/api/teachers", web::get().to(get_teachers))
             .route("/api/teachers/{id}", web::get().to(get_teacher))
+            .service(
+                actix_files::Files::new("/", "./static")
+                    .show_files_listing()
+                    .index_file("index.html")
+                    .use_last_modified(true),
+            )
     })
     .bind("127.0.0.1:8080")?
     .run()
