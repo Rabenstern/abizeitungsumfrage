@@ -6,9 +6,7 @@ function get_hello() {
             }
             return response.json();
         })
-        .then((data) =>
-            document.getElementById("greeting").innerHTML = data.message
-        )
+        .then((data) => document.getElementById("greeting").innerHTML = data)
         .catch((error) => console.error("Error:", error));
 }
 
@@ -36,15 +34,15 @@ async function post_hello() {
 }
 
 function get_students() {
-    // const username = 1;
-    const username = "muster.dorothe@gdb.lernsax.de";
+    // const username = 2;
+    const username = "musterfrau.maxi@gdb.lernsax.de";
     const password =
-        "a732989fad60ad40a5fda770a16e6c5853fca8c8c1cb491da1433e2954badbc2";
+        "27a1ee4411f01912693e7e37295b1cf0b4eadf9f3bcdfbdefa125342431ddee2";
     const headers = new Headers();
     headers.set("Authorization", "Basic " + btoa(username + ":" + password));
 
     const listContainer = document.getElementById("greeting");
-    const ul = document.createElement("id");
+    const select = document.createElement("select");
 
     fetch("/api/students", { headers: headers })
         .then((response) => {
@@ -55,12 +53,16 @@ function get_students() {
         })
         .then((data) => {
             data.forEach((item) => {
-                const li = document.createElement("li");
-                li.textContent = item.first_name;
-                ul.appendChild(li);
+                const option = document.createElement("option");
+                option.textContent = item.first_name;
+                option.setAttribute("value", item.id);
+                if (item.email === username) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
             });
 
-            listContainer.appendChild(ul);
+            listContainer.appendChild(select);
         })
         .catch((error) => console.error("Error:", error));
 }
