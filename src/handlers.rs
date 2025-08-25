@@ -70,6 +70,8 @@ pub async fn get_student(req: HttpRequest, sid: web::Path<i32>) -> Result<HttpRe
         .first::<Student>(&mut connection)
         .expect("error loading student");
 
+    let res = StudentSafe::from_student(&res);
+
     Ok(HttpResponse::Ok().json(res))
 }
 
