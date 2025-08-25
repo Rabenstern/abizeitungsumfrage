@@ -14,7 +14,7 @@ pub struct StudentsQuery {
     pub email: Option<String>,
 }
 
-#[derive(Queryable, Serialize)]
+#[derive(Queryable, Serialize, Clone)]
 pub struct Student {
     pub id: i32,
     pub email: String,

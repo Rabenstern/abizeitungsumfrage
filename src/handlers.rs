@@ -1,7 +1,9 @@
+use actix_web::{HttpRequest, HttpResponse, Result, web};
+use diesel::prelude::*;
+
+use crate::auth::auth;
 use crate::database::establish_connection;
 use crate::models::{PostMessage, Student, StudentSafe, StudentsQuery, Teacher};
-use actix_web::{HttpResponse, Result, web};
-use diesel::prelude::*;
 
 pub async fn get_api() -> Result<HttpResponse> {
     Ok(HttpResponse::Ok().json("Hello, World!"))
@@ -13,7 +15,15 @@ pub async fn post_api(message: web::Json<PostMessage>) -> Result<HttpResponse> {
     Ok(HttpResponse::Ok().json("message received"))
 }
 
-pub async fn get_students(query: web::Query<StudentsQuery>) -> Result<HttpResponse> {
+pub async fn get_students(
+    req: HttpRequest,
+    query: web::Query<StudentsQuery>,
+) -> Result<HttpResponse> {
+    let authed = auth(&req);
+    if authed.is_err() {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+
     use crate::schema::student::dsl::*;
     let mut connection = establish_connection();
 
@@ -44,7 +54,12 @@ pub async fn get_students(query: web::Query<StudentsQuery>) -> Result<HttpRespon
     Ok(HttpResponse::Ok().json(res))
 }
 
-pub async fn get_student(sid: web::Path<i32>) -> Result<HttpResponse> {
+pub async fn get_student(req: HttpRequest, sid: web::Path<i32>) -> Result<HttpResponse> {
+    let authed = auth(&req);
+    if authed.is_err() {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+
     use crate::schema::student::dsl::*;
     let mut connection = establish_connection();
 
@@ -58,7 +73,12 @@ pub async fn get_student(sid: web::Path<i32>) -> Result<HttpResponse> {
     Ok(HttpResponse::Ok().json(res))
 }
 
-pub async fn get_teachers() -> Result<HttpResponse> {
+pub async fn get_teachers(req: HttpRequest) -> Result<HttpResponse> {
+    let authed = auth(&req);
+    if authed.is_err() {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+
     use crate::schema::teacher::dsl::*;
     let mut connection = establish_connection();
 
@@ -69,7 +89,12 @@ pub async fn get_teachers() -> Result<HttpResponse> {
     Ok(HttpResponse::Ok().json(res))
 }
 
-pub async fn get_teacher(tid: web::Path<i32>) -> Result<HttpResponse> {
+pub async fn get_teacher(req: HttpRequest, tid: web::Path<i32>) -> Result<HttpResponse> {
+    let authed = auth(&req);
+    if authed.is_err() {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+
     use crate::schema::teacher::dsl::*;
     let mut connection = establish_connection();
 

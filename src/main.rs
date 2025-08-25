@@ -3,6 +3,7 @@ use crate::handlers::{get_api, get_student, get_students, get_teacher, get_teach
 use actix_web::{App, HttpServer, web};
 use dotenv::dotenv;
 
+mod auth;
 mod database;
 mod handlers;
 mod models;
