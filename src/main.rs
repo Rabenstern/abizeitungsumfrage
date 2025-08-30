@@ -25,6 +25,7 @@ async fn main() -> std::io::Result<()> {
         }
     }
 
+    log::info!("mounting routes and services...");
     HttpServer::new(|| {
         App::new()
             .route("/api", web::get().to(get_api))
