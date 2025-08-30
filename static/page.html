@@ -7,17 +7,33 @@
     <link rel="icon" type="image/x-icon" href="img/favicon.svg">
     <title>PAGE</title>
     <link href="css/style.css" rel="stylesheet">
-    <script src="js/script.js"></script>
 </head>
 
 <body>
-    <h1>TEST</h1>
-    <div id="buttons">
-        <button type="button" onclick="get_hello()">hello</button>
-        <button type="button" onclick="post_hello()">send hello</button>
-        <button type="button" onclick="get_students()">list students</button>
-    </div>
-    <div id="greeting"></div>
+    <header>
+        <h1>TEST</h1>
+    </header>
+
+    <main>
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+
+            <label for="token">Token:</label>
+            <input type="password" id="token" required>
+
+            <button type="submit">Login</button>
+        </form>
+        <button type="submit" onclick="get_students()">List students</button>
+        <select id="students"></select>
+    </main>
+
+    <footer>
+        <button type="submit" onclick="deleteCookies()">Delete Cookies</button>
+        <a href="https://github.com/Rabenstern/abizeitungsumfrage">&copy; Rabenstern</a>
+    </footer>
+
+    <script src="js/script.js"></script>
 </body>
 
 </html>

@@ -1,3 +1,26 @@
+document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    document.cookie = "username=" + document.getElementById("username").value + ";";
+    document.cookie = "token=" + document.getElementById("token").value + ";";
+});
+
+function getCookie(cookieName) {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+        const [name, value] = cookie.split('=');
+        if (name === cookieName) {
+            return decodeURIComponent(value);
+        }
+    }
+    return null;
+}
+
+function deleteCookies() {
+    document.cookie = "username=;";
+    document.cookie = "token=;";
+}
+
 function get_hello() {
     fetch("/api")
         .then((response) => {
@@ -35,14 +58,17 @@ async function post_hello() {
 
 function get_students() {
     // const username = 2;
-    const username = "musterfrau.maxi@gdb.lernsax.de";
-    const password =
-        "27a1ee4411f01912693e7e37295b1cf0b4eadf9f3bcdfbdefa125342431ddee2";
-    const headers = new Headers();
-    headers.set("Authorization", "Basic " + btoa(username + ":" + password));
+    // const username = "musterfrau.maxi@gdb.lernsax.de";
+    // const token =
+    //     "27a1ee4411f01912693e7e37295b1cf0b4eadf9f3bcdfbdefa125342431ddee2";
 
-    const listContainer = document.getElementById("greeting");
-    const select = document.createElement("select");
+    const username = getCookie("username");
+    const token = getCookie("token");
+
+    const headers = new Headers();
+    headers.set("Authorization", "Basic " + btoa(username + ":" + token));
+
+    const students = document.getElementById("students");
 
     fetch("/api/students", { headers: headers })
         .then((response) => {
@@ -59,10 +85,8 @@ function get_students() {
                 if (item.email === username) {
                     option.selected = true;
                 }
-                select.appendChild(option);
+                students.appendChild(option);
             });
-
-            listContainer.appendChild(select);
         })
         .catch((error) => console.error("Error:", error));
 }
