@@ -2,43 +2,100 @@
     --bg: #000;
     --fg: #fff;
     --hl: #f00;
+    --hl2: #d00;
 }
 
 body {
+    padding: 0;
+    margin: 0;
+
     color: var(--fg);
     background-color: var(--bg);
+
+    font-family: sans-serif;
+
     min-height: 100vh;
 
-    display: grid;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+a {
+    text-decoration: none;
+    color: purple;
 }
 
 header {
-    grid-row: 1;
-    height: min-content;
+    background-color: var(--hl);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+header a {
+    color: inherit;
+    text-decoration: none;
+}
+
+header #greeting {
+    text-align: center;
 }
 
 main {
-    grid-row: 2;
+    padding: 10px;
+    margin: 0;
 }
 
-h1 {
-    background-color: var(--hl);
+header h1 {
+    text-align: center;
+    padding: 0;
+    margin: 0;
 }
 
 #loginForm {
     margin-bottom: 10px;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#loginForm * {
+    font-size: 1.2rem;
+}
+
+#loginForm button {
+    color: var(--fg);
+    background-color: var(--hl);
+
+    font-weight: bold;
+
+    border: none;
+    border-radius: none;
+}
+
+#loginForm button:hover {
+    background-color: var(--hl2);
 }
 
 footer {
     background-color: var(--hl);
+
     padding: 10px;
 
-    grid-row: 3;
-    align-self: end;
-
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
 }
 
-footer:nth-child {
-    border-right: 1px solid white;
+.footer-item {
+    color: var(--fg);
+    border-right: 1px solid var(--fg);
+    padding: 5px;
+}
+
+.footer-item:last-child {
+    border: none;
 }

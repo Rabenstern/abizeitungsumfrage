@@ -1,10 +1,19 @@
+// set greeting
+if (getCookie("username") !== "") {
+    document.getElementById("greeting").innerHTML = "Hallo <b>" + getCookie("username") + "</b> 🚀";
+}
+
+// set cookies on login
 document.getElementById("loginForm").addEventListener("submit", function(event) {
     event.preventDefault();
 
     document.cookie = "username=" + document.getElementById("username").value + ";";
     document.cookie = "token=" + document.getElementById("token").value + ";";
+
+    location.reload();
 });
 
+// helper function to get a cookie
 function getCookie(cookieName) {
     const cookies = document.cookie.split('; ');
     for (const cookie of cookies) {
@@ -16,11 +25,17 @@ function getCookie(cookieName) {
     return null;
 }
 
-function deleteCookies() {
+// logout user session
+function logout() {
     document.cookie = "username=;";
     document.cookie = "token=;";
+
+    document.getElementById("greeting").innerHTML = "";
+
+    location.reload();
 }
 
+// API health check GET
 function get_hello() {
     fetch("/api")
         .then((response) => {
@@ -33,6 +48,7 @@ function get_hello() {
         .catch((error) => console.error("Error:", error));
 }
 
+// API health check POST
 async function post_hello() {
     const data = { message: "Saljutations!" };
     console.log(JSON.stringify(data));
@@ -56,6 +72,7 @@ async function post_hello() {
     }
 }
 
+// get list of students
 function get_students() {
     // const username = 2;
     // const username = "musterfrau.maxi@gdb.lernsax.de";
@@ -78,6 +95,7 @@ function get_students() {
             return response.json();
         })
         .then((data) => {
+            // fill student list
             data.forEach((item) => {
                 const option = document.createElement("option");
                 option.textContent = item.first_name;

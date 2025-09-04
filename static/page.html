@@ -11,16 +11,19 @@
 
 <body>
     <header>
-        <h1>TEST</h1>
+        <a href="index.html">
+            <h1>TEST</h1>
+        </a>
+        <div id="greeting"></div>
     </header>
 
     <main>
         <form id="loginForm">
-            <label for="username">Username:</label>
-            <input type="text" id="username" required>
+            <!-- <label for="username">Username:</label> -->
+            <input type="text" id="username" placeholder="Username" required>
 
-            <label for="token">Token:</label>
-            <input type="password" id="token" required>
+            <!-- <label for="token">Token:</label> -->
+            <input type="password" id="token" placeholder="Token" required>
 
             <button type="submit">Login</button>
         </form>
@@ -29,8 +32,12 @@
     </main>
 
     <footer>
-        <button type="submit" onclick="deleteCookies()">Delete Cookies</button>
-        <a href="https://github.com/Rabenstern/abizeitungsumfrage">&copy; Rabenstern</a>
+        <div class="footer-item">
+            <button type="submit" onclick="logout()">Logout</button>
+        </div>
+        <div class="footer-item">
+            <a href="https://github.com/Rabenstern/abizeitungsumfrage">&copy; Rabenstern</a>
+        </div>
     </footer>
 
     <script src="js/script.js"></script>
