@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="stylesheet_main.css">
+<title>
+    Abizeitung
+</title>
+<link rel="icon" type="image/png" href=""/>
+        </head>
+        <body>
+          <header>
+            <nav>
+          <ul>
+            <li><img src="" id="logo"></li>
+            <li><a href="abi_main.html"><em>ABIZEITUNG</em></a></li>
+            <li><a href="abi_main.html">Anmeldung</a></li>
+            <li class="dropdown">
+              <a href="javascript:void(0)" class="dropbtn">Übersicht</a>
+                <div class="dropdown-content">
+                  <a href="abi_main.html">Bitte melde Dich an!</a>
+            <li><a href="Über_Autor.html">Abmelden</a></li> 
+            <li><a href="blogliste.html">[lightmode]</a></li>
+            </div>
+          </li>
+        </ul>
+        </nav>
+        </header>
+        <center>
+          <h1>Anmeldung</h1>
+<!-- <fieldset> <legend>-->
+<!-- Anmeldeformular -->
+<form name="lernsaxEmail" onsubmit="saveSubmit(event)" action="" target="_self" method="get" autocomplete="on">
+    <label for="email">Lernsax-Email-Adresse angeben:</label><br>
+    <input type="email" id="email" name="email" placeholder="mustermann.max@gdb.lernsax.de" 
+    size="35%" min="2" max="60" required autofocus autocomplete="email">
+    <br><br>
+    <label for="token">Login-Token angeben:</label><br>
+    <input type="text" id="token" name="token"
+    size="35%" min="2" max="60" required>
+    <br><br>  
+    <input type="submit" value="Absenden">
+</form>
+<br>
+
+<script>
+// Senden-Button
+function saveSubmit(event) {
+  // Neuladen verhindern
+  event.preventDefault();
+
+  // Werte aus dem Formular
+  const email = document.forms["lernsaxEmail"]["email"].value;
+  const token = document.forms["lernsaxEmail"]["token"].value;
+
+  // POST-Anfrage an api/auth
+  fetch("informatik/abizeitung/api/auth", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+    },
+    // Einbinden der Formulardaten
+    body: JSON.stringify({
+      email: email,
+      token: token
+    })
+    // Validierung
+    .then(res => {
+      if (!res.ok) throw new Error("Serverfehler");
+      return res.json();
+    })
+    .then(data => {
+      if (data.success) {
+        // Weiterleitung, wenn "success": true
+        window.location.href = "abi_abstimmung.html";
+      } else {
+        alert("Login fehlgeschlagen.");
+      }
+    })
+    .catch(error => {
+      console.error(err);
+      alert("Es gab ein Problem beim Absenden.");
+    })
+  })
+}
+</script>
+
+        </center>
+    <footer>
+      <div style="float: left" id="white"><a href="">@Rabenstern</a></div>
+    </footer>
+    </body>
+<footer>
+</footer>
+</body>
+</html>
