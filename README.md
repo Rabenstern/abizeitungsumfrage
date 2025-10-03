@@ -12,15 +12,41 @@ This being *free software (GPL v3)* forks are welcome and PRs are appreciated �
 
 ## running the server
 
-To populate the DB at startup
-`students.csv` in the format `email,last_name,first_name`
-and `teachers.csv` in the format `last_name,first_name` are required.
+To populate the DB at startup the following files are required:
+
+* `students.csv` in the format `email,last_name,first_name`
+* `teachers.csv` in the format `last_name,first_name`
+* `questions.csv` in the format `q,opt1,opt2,opt3`
+
+An example for `questions.csv` would be:
+
+```csv
+q,opt1,opt2,opt3
+"Bei jeder Party dabei",Student,,
+"Süßestes Paar",Student,Student,
+"Beste Kombi im Unterricht",Student,Teacher,
+```
+
+Note the extra `,` to indicate a `NULL` value for unused opts.
+
+You will also need a `config.toml` with the following parameters:
+
+```toml
+title = "Meine Schule Jahrgang '26"
+
+[files]
+students_file = "students.csv"
+teachers_file = "teachers.csv"
+question_file = "questions.csv"
+
+[db]
+database_url = "sqlite://./database.db?mode=rwc" # if unsure keep this the way it is
+```
 
 In addition you will need the following in your `.env`:
 
 ```
 TOKEN_SALT="random string"
-DB_URL="database.db"
 ```
 
 To start the server run this in your shell:

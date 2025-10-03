@@ -2,6 +2,7 @@
 *.csv
 *.db
 *.log
+*.json
 .env
 
 

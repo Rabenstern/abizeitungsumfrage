@@ -1,68 +1,117 @@
 use anyhow::Result;
-use diesel::prelude::*;
-use dotenv::dotenv;
-use std::env;
+use sea_orm::{DatabaseConnection, EntityTrait, Set};
 
-use crate::models::{NewStudent, NewTeacher, StudentCSV};
+use crate::{
+    config::Config,
+    entities,
+    models::{
+        question::NewQuestion,
+        question::Opt::{Student, Teacher},
+        student::{NewStudent, StudentCSV},
+        teacher::NewTeacher,
+    },
+};
 
-pub fn establish_connection() -> SqliteConnection {
-    dotenv().ok();
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    SqliteConnection::establish(&database_url)
-        .unwrap_or_else(|_| panic!("Error connecting to the database: {}", database_url))
+/// load students into DB from file
+pub async fn load_students(db: &DatabaseConnection, cfg: &Config) -> Result<()> {
+    if let Some(_) = entities::student::Entity::find().one(db).await? {
+        log::info!("DB already has students");
+        return Ok(());
+    }
+
+    let mut rdr = csv::Reader::from_path(&cfg.files.students_file)?;
+
+    let mut new_students = Vec::new();
+
+    for result in rdr.deserialize() {
+        let result: StudentCSV = result?;
+        let s: NewStudent = NewStudent::from_student_csv(&result)?;
+
+        let new_student = entities::student::ActiveModel {
+            email: Set(s.email),
+            token: Set(s.token),
+            first_name: Set(s.first_name),
+            last_name: Set(s.last_name),
+            ..Default::default()
+        };
+
+        new_students.push(new_student);
+    }
+
+    entities::student::Entity::insert_many(new_students)
+        .exec(db)
+        .await?;
+
+    Ok(())
 }
 
-pub fn load_data() -> Result<()> {
-    use crate::schema::student::dsl::*;
-    use crate::schema::teacher::dsl::*;
-
-    let mut connection = establish_connection();
-
-    // check if students and or teachers DB has entries
-    let count_s: i64 = student
-        .count()
-        .get_result(&mut connection)
-        .expect("failed to count students");
-
-    if count_s == 0 {
-        // if not, read CSV and populate DB
-        let mut rdr =
-            csv::Reader::from_path("students.csv").expect("failed to open file students.csv");
-
-        for result in rdr.deserialize() {
-            let result: StudentCSV = result?;
-
-            let s = NewStudent::from_student_csv(&result)?;
-
-            diesel::insert_into(student)
-                .values(s)
-                .execute(&mut connection)?;
-        }
+/// load teachers into DB from file
+pub async fn load_teachers(db: &DatabaseConnection, cfg: &Config) -> Result<()> {
+    if let Some(_) = entities::teacher::Entity::find().one(db).await? {
+        log::info!("DB already has teacher");
+        return Ok(());
     }
 
-    let count_t: i64 = teacher
-        .count()
-        .get_result(&mut connection)
-        .expect("failed to count teachers");
+    let mut rdr = csv::Reader::from_path(&cfg.files.teachers_file)?;
 
-    if count_t == 0 {
-        // if not, read CSV and populate DB
-        let mut rdr =
-            csv::Reader::from_path("teachers.csv").expect("failed to open file teachers.csv");
+    let mut new_teachers = Vec::new();
 
-        for result in rdr.deserialize() {
-            let result: NewTeacher = result?;
+    for result in rdr.deserialize() {
+        let t: NewTeacher = result?;
 
-            let t = NewTeacher {
-                first_name: result.first_name,
-                last_name: result.last_name,
-            };
+        let new_teacher = entities::teacher::ActiveModel {
+            first_name: Set(t.first_name),
+            last_name: Set(t.last_name),
+            ..Default::default()
+        };
 
-            diesel::insert_into(teacher)
-                .values(t)
-                .execute(&mut connection)?;
-        }
+        new_teachers.push(new_teacher);
     }
+
+    entities::teacher::Entity::insert_many(new_teachers)
+        .exec(db)
+        .await?;
+
+    Ok(())
+}
+
+/// load questions into DB from file
+pub async fn load_questions(db: &DatabaseConnection, cfg: &Config) -> Result<()> {
+    if let Some(_) = entities::question::Entity::find().one(db).await? {
+        log::info!("DB already has questions");
+        return Ok(());
+    }
+
+    let mut rdr = csv::Reader::from_path(&cfg.files.question_file)?;
+
+    let mut new_questions = Vec::new();
+
+    for result in rdr.deserialize() {
+        let q: NewQuestion = result?;
+
+        let new_question = entities::question::ActiveModel {
+            q: Set(Some(q.q)),
+            opt1: Set(q.opt1.map(|x| match x {
+                Student => String::from("Student"),
+                Teacher => String::from("Teacher"),
+            })),
+            opt2: Set(q.opt2.map(|x| match x {
+                Student => String::from("Student"),
+                Teacher => String::from("Teacher"),
+            })),
+            opt3: Set(q.opt3.map(|x| match x {
+                Student => String::from("Student"),
+                Teacher => String::from("Teacher"),
+            })),
+            ..Default::default()
+        };
+
+        new_questions.push(new_question);
+    }
+
+    entities::question::Entity::insert_many(new_questions)
+        .exec(db)
+        .await?;
 
     Ok(())
 }

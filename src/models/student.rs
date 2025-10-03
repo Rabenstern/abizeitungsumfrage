@@ -1,20 +1,14 @@
 use anyhow::Result;
-use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use crate::schema::{student, teacher};
+use crate::entities;
 
-#[derive(Serialize, Deserialize)]
-pub struct PostMessage {
-    pub message: String,
-}
-
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub struct StudentsQuery {
     pub email: Option<String>,
 }
 
-#[derive(Queryable, Serialize, Clone)]
+#[derive(Serialize, Clone)]
 pub struct Student {
     pub id: i32,
     pub email: String,
@@ -23,7 +17,7 @@ pub struct Student {
     pub last_name: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct StudentSafe {
     pub id: i32,
     pub email: String,
@@ -32,7 +26,7 @@ pub struct StudentSafe {
 }
 
 impl StudentSafe {
-    pub fn from_student(student: &Student) -> StudentSafe {
+    pub fn from_model(student: &entities::student::Model) -> StudentSafe {
         StudentSafe {
             id: student.id,
             email: student.email.clone(),
@@ -42,15 +36,14 @@ impl StudentSafe {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub struct StudentCSV {
     pub email: String,
     pub first_name: String,
     pub last_name: String,
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize)]
-#[diesel(table_name = student)]
+#[derive(Deserialize)]
 pub struct NewStudent {
     pub email: String,
     pub token: String,
@@ -71,18 +64,4 @@ impl NewStudent {
             last_name: student.last_name.clone(),
         })
     }
-}
-
-#[derive(Queryable, Serialize)]
-pub struct Teacher {
-    pub id: i32,
-    pub first_name: String,
-    pub last_name: String,
-}
-
-#[derive(Queryable, Insertable, Serialize, Deserialize)]
-#[diesel(table_name = teacher)]
-pub struct NewTeacher {
-    pub first_name: String,
-    pub last_name: String,
 }

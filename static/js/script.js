@@ -7,10 +7,29 @@ if (getCookie("username") !== "") {
 document.getElementById("loginForm").addEventListener("submit", function(event) {
     event.preventDefault();
 
-    document.cookie = "username=" + document.getElementById("username").value + ";";
-    document.cookie = "token=" + document.getElementById("token").value + ";";
+    const username = document.getElementById("username").value;
+    const token = document.getElementById("token").value;
 
-    location.reload();
+    const headers = new Headers();
+    headers.set("Authorization", "Basic " + btoa(username + ":" + token));
+
+    const students = document.getElementById("students");
+
+    fetch("/api/authed", { headers: headers })
+        .then((response) => {
+            if (!response.ok) {
+                alert("Konnte nicht authentifizieren, bitte überprüfe deine Anmeldedaten");
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(() => {
+            document.cookie = "username=" + username + ";";
+            document.cookie = "token=" + token + ";";
+
+            location.reload();
+        })
+        .catch((error) => console.error("Error:", error));
 });
 
 // helper function to get a cookie
