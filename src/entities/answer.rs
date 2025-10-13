@@ -9,12 +9,12 @@ pub struct Model {
     pub id: i32,
     pub sid: i32,
     pub qid: i32,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub opt1: Option<String>,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub opt2: Option<String>,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub opt3: Option<String>,
+    #[sea_orm(nullable)]
+    pub opt1: Option<i32>,
+    #[sea_orm(nullable)]
+    pub opt2: Option<i32>,
+    #[sea_orm(nullable)]
+    pub opt3: Option<i32>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

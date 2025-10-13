@@ -24,7 +24,7 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Question::Q).string())
+                    .col(ColumnDef::new(Question::Q).string().not_null())
                     .col(ColumnDef::new(Question::Opt1).string())
                     .col(ColumnDef::new(Question::Opt2).string())
                     .col(ColumnDef::new(Question::Opt3).string())

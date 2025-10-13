@@ -90,7 +90,7 @@ pub async fn load_questions(db: &DatabaseConnection, cfg: &Config) -> Result<()>
         let q: NewQuestion = result?;
 
         let new_question = entities::question::ActiveModel {
-            q: Set(Some(q.q)),
+            q: Set(q.q),
             opt1: Set(q.opt1.map(|x| match x {
                 Student => String::from("Student"),
                 Teacher => String::from("Teacher"),

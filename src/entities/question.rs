@@ -8,7 +8,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     #[sea_orm(column_type = "Text", nullable)]
-    pub q: Option<String>,
+    pub q: String,
     #[sea_orm(column_type = "Text", nullable)]
     pub opt1: Option<String>,
     #[sea_orm(column_type = "Text", nullable)]

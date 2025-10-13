@@ -8,7 +8,7 @@
 //! ```
 
 use actix_web::{
-    App, HttpServer,
+    App, HttpServer, middleware,
     web::{self, Data},
 };
 use dotenv::dotenv;
@@ -18,9 +18,7 @@ use std::{process::exit, sync::Mutex};
 
 // use crate::database::load_data;
 use config::Config;
-use handlers::{
-    get_api, get_authed, get_student, get_students, get_teacher, get_teachers, post_api,
-};
+use handlers::*;
 use migrator::Migrator;
 
 use crate::database::{load_questions, load_students, load_teachers};
@@ -64,7 +62,7 @@ async fn main() -> std::io::Result<()> {
     };
 
     log::info!("refreshing migrations");
-    if let Err(e) = Migrator::refresh(&db).await {
+    if let Err(e) = Migrator::up(&db, None).await {
         log::error!("failed to refresh migrations");
         log::error!("> {e}");
         exit(1);
@@ -95,20 +93,24 @@ async fn main() -> std::io::Result<()> {
     log::info!("mounting routes and services...");
     HttpServer::new(move || {
         App::new()
+            .wrap(
+                middleware::DefaultHeaders::new()
+                    .add(("Content-Security-Policy", "default-src 'self'")),
+            )
             .app_data(Data::clone(&db))
             .route("/api", web::get().to(get_api))
             .route("/api", web::post().to(post_api))
             .route("/api/authed", web::get().to(get_authed))
             .route("/api/students", web::get().to(get_students))
-            .route("/api/students/{id}", web::get().to(get_student))
+            .route("/api/student/{id}", web::get().to(get_student))
             .route("/api/teachers", web::get().to(get_teachers))
-            .route("/api/teachers/{id}", web::get().to(get_teacher))
-            // .route("/api/questions", web::get().to(get_questions))
-            // .route("/api/question/{id}", web::get().to(get_question))
-            // .route("/api/question", web::post().to(post_question))
-            // .route("/api/answers", web::get().to(get_answers))
-            // .route("/api/answer/{id}", web::get().to(get_answer))
-            // .route("/api/answer", web::post().to(post_answer))
+            .route("/api/teacher/{id}", web::get().to(get_teacher))
+            .route("/api/questions", web::get().to(get_questions))
+            .route("/api/question/{id}", web::get().to(get_question))
+            // .route("/api/question/{id}", web::post().to(post_question))
+            .route("/api/answers", web::get().to(get_answers))
+            .route("/api/answer/{id}", web::get().to(get_answer))
+            .route("/api/answer", web::post().to(post_answer))
             .service(
                 actix_files::Files::new("/", "./static")
                     .show_files_listing()
