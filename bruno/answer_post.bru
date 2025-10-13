@@ -1,0 +1,25 @@
+meta {
+  name: answer_post
+  type: http
+  seq: 12
+}
+
+post {
+  url: http://127.0.0.1:8080/api/answer
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "sid": 1,
+    "qid": 1,
+    "opt1": 1,
+    "opt2": null,
+    "opt3": null
+  }
+}
+
+settings {
+  encodeUrl: true
+}

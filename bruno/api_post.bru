@@ -1,0 +1,25 @@
+meta {
+  name: api_post
+  type: http
+  seq: 9
+}
+
+post {
+  url: http://127.0.0.1:8080/api
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "message": "test"
+  }
+}
+
+body:text {
+  test
+}
+
+settings {
+  encodeUrl: true
+}

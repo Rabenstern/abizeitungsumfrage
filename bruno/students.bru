@@ -1,0 +1,19 @@
+meta {
+  name: students
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://127.0.0.1:8080/api/students?email=musterfrau.maxi@gdb.lernsax.de
+  body: none
+  auth: inherit
+}
+
+params:query {
+  email: musterfrau.maxi@gdb.lernsax.de
+}
+
+settings {
+  encodeUrl: true
+}
