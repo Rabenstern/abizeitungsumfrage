@@ -3,6 +3,7 @@
     --fg: #fff;
     --hl: #f00;
     --hl2: #d00;
+    --rad: 5px;
 }
 
 body {
@@ -43,8 +44,8 @@ header #greeting {
 }
 
 main {
+    margin: 0 20%;
     padding: 10px;
-    margin: 0;
 }
 
 header h1 {
@@ -59,10 +60,19 @@ header h1 {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    justify-content: center;
 }
 
 #loginForm * {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    border-radius: var(--rad);
+}
+
+#loginFields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
 }
 
 #loginForm button {
@@ -72,11 +82,35 @@ header h1 {
     font-weight: bold;
 
     border: none;
-    border-radius: none;
 }
 
 #loginForm button:hover {
     background-color: var(--hl2);
+}
+
+#questions * .optDiv {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#questions * .optDiv select {
+    margin-right: 10px;
+
+    color: var(--fg);
+    background-color: var(--hl);
+    border: none;
+    border-radius: var(--rad);
+    font-size: 1.2rem;
+}
+
+#questions * .optDiv select:hover {
+    background-color: var(--hl2);
+}
+
+#questions * .optDiv select:last-child {
+    margin-right: inherit;
 }
 
 footer {

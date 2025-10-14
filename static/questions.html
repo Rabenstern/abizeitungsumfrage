@@ -18,14 +18,13 @@
     </header>
 
     <main>
-        <form id="loginForm">
-            <div id="loginFields">
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="password" id="token" placeholder="Token" required>
-            </div>
+        <h1>Umfrage</h1>
 
-            <button type="submit">Login</button>
-        </form>
+        <p>Bitte ordne Personen der Aussage zu.</p>
+
+        <div id="questions"></div>
+
+        <button id="saveBtn" type="button">Speichern</button>
     </main>
 
     <footer>
@@ -35,7 +34,8 @@
         <div class="footer-item">
             <a href="https://github.com/Rabenstern/abizeitungsumfrage">&copy; Rabenstern</a>
         </div>
-        <div>
+        <div class="footer-item">
+            Powered by OTC via
             <a href="https://www.gymnasium-buehlau.de/schule/gta">
                 Microcontroller / 3D-Druck / Jugend Forscht GTA
             </a>

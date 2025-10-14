@@ -10,6 +10,12 @@ It is designed to work for our use case and our use case only.
 Nonetheless we hope others might find the project useful too.
 This being *free software (GPL v3)* forks are welcome and PRs are appreciated 💜.
 
+## Prerequisites
+
+* `build-essential`
+* `libssl-dev`
+* `pkg-config`
+
 ## running the server
 
 To populate the DB at startup the following files are required:

@@ -24,7 +24,7 @@ impl Question {
         let opt1: Option<Opt> = match &question.opt1 {
             Some(s) => match s.as_str() {
                 "Student" => Some(Opt::Student),
-                "Teacher" => Some(Opt::Student),
+                "Teacher" => Some(Opt::Teacher),
                 _ => None,
             },
             None => None,
@@ -33,7 +33,7 @@ impl Question {
         let opt2: Option<Opt> = match &question.opt2 {
             Some(s) => match s.as_str() {
                 "Student" => Some(Opt::Student),
-                "Teacher" => Some(Opt::Student),
+                "Teacher" => Some(Opt::Teacher),
                 _ => None,
             },
             None => None,
