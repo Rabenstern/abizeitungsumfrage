@@ -12,6 +12,8 @@ This being *free software (GPL v3)* forks are welcome and PRs are appreciated ðŸ
 
 ## Prerequisites
 
+* `stable` [Rust](https://rust-lang.org) toolchain
+
 * `build-essential`
 * `libssl-dev`
 * `pkg-config`
