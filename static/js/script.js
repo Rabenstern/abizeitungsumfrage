@@ -5,7 +5,7 @@
 // authstr: Basic bXVzdGVyZnJhdS5tYXhpQGdkYi5sZXJuc2F4LmRlOjI3YTFlZTQ0MTFmMDE5MTI2OTNlN2UzNzI5NWIxY2YwYjRlYWRmOWYzYmNkZmJkZWZhMTI1MzQyNDMxZGRlZTI=
 
 // set greeting
-if (getCookie("username") !== "") {
+if (getCookie("username") !== ("" || null)) {
     const greeting = document.getElementById("greeting");
 
     if (greeting != null) {
