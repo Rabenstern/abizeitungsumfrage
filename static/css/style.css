@@ -1,9 +1,39 @@
 :root {
-    --bg: #000;
-    --fg: #fff;
-    --hl: #f00;
-    --hl2: #d00;
+    /* Catppuccin Mocha */
+    /* Text */
+    --fg: #cdd6f4;
+    /* Crust */
+    --fg2: #11111b;
+    /* Base */
+    --bg: #1e1e2e;
+    /* Crust */
+    --bg2: #11111b;
+    /* Mauve */
+    --hl: #cba6f7;
+    /* Lavender */
+    --hl2: #b4befe;
+
     --rad: 5px;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        /* Catppuccin Latte */
+        /* Text */
+        --fg: #4c4f69;
+        /* Crust */
+        --fg2: #dce0e8;
+        /* Base */
+        --bg: #eff1f5;
+        /* Crust */
+        --bg2: #dce0e8;
+        /* Mauve */
+        --hl: #8839ef;
+        /* Lavender */
+        --hl2: #7287fd;
+
+        --rad: 5px;
+    }
 }
 
 body {
@@ -29,7 +59,7 @@ a {
 }
 
 header {
-    background-color: var(--hl);
+    background-color: var(--bg2);
     padding: 10px;
     margin-bottom: 10px;
 }
@@ -76,7 +106,7 @@ header h1 {
 }
 
 #loginForm button {
-    color: var(--fg);
+    color: var(--fg2);
     background-color: var(--hl);
 
     font-weight: bold;
@@ -88,17 +118,20 @@ header h1 {
     background-color: var(--hl2);
 }
 
+#questions {
+    margin: 50px 0;
+}
+
 #questions * .optDiv {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    align-items: stretch;
     gap: 10px;
 }
 
 #questions * .optDiv select {
-    margin-right: 10px;
-
-    color: var(--fg);
+    color: var(--fg2);
     background-color: var(--hl);
     border: none;
     border-radius: var(--rad);
@@ -109,12 +142,24 @@ header h1 {
     background-color: var(--hl2);
 }
 
-#questions * .optDiv select:last-child {
-    margin-right: inherit;
+#saveBtn {
+    color: var(--fg2);
+    background-color: var(--hl);
+
+    font-weight: bold;
+    font-size: 1.2rem;
+
+    border: none;
+    border-radius: var(--rad);
 }
 
+#saveBtn:hover {
+    background-color: var(--hl2);
+}
+
+
 footer {
-    background-color: var(--hl);
+    background-color: var(--bg2);
 
     padding: 10px;
 
