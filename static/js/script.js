@@ -5,10 +5,10 @@
 // authstr: Basic bXVzdGVyZnJhdS5tYXhpQGdkYi5sZXJuc2F4LmRlOjI3YTFlZTQ0MTFmMDE5MTI2OTNlN2UzNzI5NWIxY2YwYjRlYWRmOWYzYmNkZmJkZWZhMTI1MzQyNDMxZGRlZTI=
 
 // set greeting
-if (getCookie("username") !== ("" || null)) {
+if (getCookie("username") !== "" && getCookie("username") !== null) {
     const greeting = document.getElementById("greeting");
 
-    if (greeting != null) {
+    if (greeting !== null) {
         greeting.innerHTML = "Hallo <b>" + getCookie("username") + "</b> 🚀";
     }
 }
@@ -23,8 +23,6 @@ if (document.getElementById("loginForm") != null) {
 
         const headers = new Headers();
         headers.set("Authorization", "Basic " + btoa(username + ":" + token));
-
-        const students = document.getElementById("students");
 
         fetch("/api/authed", { headers: headers })
             .then((response) => {
@@ -75,7 +73,7 @@ function logout() {
 
     document.getElementById("greeting").innerHTML = "";
 
-    location.reload();
+    location.href = "index.html";
 }
 
 function build_authstr() {
@@ -126,6 +124,39 @@ async function get_teachers() {
     return res.json();
 }
 
+// get list of questions
+async function get_questions() {
+    const authstr = build_authstr();
+
+    const headers = new Headers();
+    headers.set("Authorization", authstr);
+
+    const res = await fetch("/api/questions", { headers: headers });
+    if (!res.ok) {
+        throw new Error("Network response was not ok: ", res.status);
+    }
+
+    return res.json();
+}
+
+// get list of answers
+async function get_answers(sid) {
+    const authstr = build_authstr();
+
+    const headers = new Headers();
+    headers.set("Authorization", authstr);
+
+    const url = "/api/answers?sid=" + sid;
+
+    const res = await fetch(url, { headers: headers });
+    if (!res.ok) {
+        throw new Error("Network response was not ok: ", res.status);
+    }
+
+    return res.json();
+}
+
+// post student's answers to server
 async function post_answer(a) {
     const authstr = build_authstr();
 
@@ -145,26 +176,41 @@ async function post_answer(a) {
 }
 
 async function load_questions() {
-    const authstr = build_authstr();
-
-    const headers = new Headers();
-    headers.set("Authorization", authstr);
-
-    const questions = document.getElementById("questions");
-
     try {
-        const response = await fetch("/api/questions", { headers: headers });
-        if (!response.ok) {
-            throw new Error("Network response was not ok: ", response.status);
-        }
-        const data = await response.json();
         const students = await get_students();
+        if (!Array.isArray(students)) {
+            console.error("get_students() did not return an array");
+        }
+
+        const teachers = await get_teachers();
+        if (!Array.isArray(teachers)) {
+            console.error("get_teachers() did not return an array");
+        }
+
+        const data = await get_questions();
+        if (!Array.isArray(data)) {
+            console.error("get_questions() did not return an array");
+        }
+
+        // get current student
+        const username = getCookie("username");
+        const s = await get_students_with_email(username);
+
+        // student answers
+        const answers = await get_answers(s[0].id);
+        if (!Array.isArray(answers)) {
+            console.error("get_answers() did not return an array");
+        }
+
+        const questions = document.getElementById("questions");
 
         // fill student list
         data.forEach(async (item) => {
             const question = document.createElement("div");
             question.className = "question";
             question.dataset.qid = item.id;
+
+            const answer = answers.filter((a) => a.qid == item.id)[0];
 
             const q = document.createElement("h2");
             q.textContent = item.q;
@@ -175,36 +221,44 @@ async function load_questions() {
 
             if (item.opt1) {
                 const opt = document.createElement("select");
+
+                let sel;
+                if (answer.opt1) {
+                    sel = answer.opt;
+                } else {
+                    const preselect = document.createElement("option");
+                    preselect.selected = true;
+                    preselect.disabled = true;
+                    preselect.innerHTML = "Bitte auswählen";
+                    opt.appendChild(preselect);
+                }
+
                 opt.dataset.opt = 1;
 
                 if (item.opt1 === "Student") {
-                    const students = await get_students();
-                    console.log("students =", students);
+                    students.forEach((s) => {
+                        const option = document.createElement("option");
+                        option.value = s.id;
+                        option.textContent = `${s.first_name} ${s.last_name}`;
 
-                    if (Array.isArray(students)) {
-                        students.forEach((s) => {
-                            const option = document.createElement("option");
-                            option.value = s.id;
-                            option.textContent = `${s.first_name} ${s.last_name}`;
-                            opt.appendChild(option);
-                        });
-                    } else {
-                        console.error("get_students() did not return an array");
-                    }
+                        if (typeof sel !== undefined && sel === s.id) {
+                            preselect.selected = false;
+                            option.selected = true;
+                        }
+                        opt.appendChild(option);
+                    });
                 } else if (item.opt1 === "Teacher") {
-                    const teachers = await get_teachers();
-                    console.log("teachers =", teachers);
+                    teachers.forEach((s) => {
+                        const option = document.createElement("option");
+                        option.value = s.id;
+                        option.textContent = `${s.first_name} ${s.last_name}`;
 
-                    if (Array.isArray(teachers)) {
-                        teachers.forEach((s) => {
-                            const option = document.createElement("option");
-                            option.value = s.id;
-                            option.textContent = `${s.first_name} ${s.last_name}`;
-                            opt.appendChild(option);
-                        });
-                    } else {
-                        console.error("get_teachers() did not return an array");
-                    }
+                        if (sel !== undefined && sel === s.id) {
+                            preselect.selected = false;
+                            option.selected = true;
+                        }
+                        opt.appendChild(option);
+                    });
                 }
 
                 optDiv.appendChild(opt);
@@ -212,36 +266,44 @@ async function load_questions() {
 
             if (item.opt2) {
                 const opt = document.createElement("select");
+
+                let sel;
+                if (answer.opt1) {
+                    sel = answer.opt;
+                } else {
+                    const preselect = document.createElement("option");
+                    preselect.selected = true;
+                    preselect.disabled = true;
+                    preselect.innerHTML = "Bitte auswählen";
+                    opt.appendChild(preselect);
+                }
+
                 opt.dataset.opt = 2;
 
                 if (item.opt2 === "Student") {
-                    const students = await get_students();
-                    console.log("students =", students);
+                    students.forEach((s) => {
+                        const option = document.createElement("option");
+                        option.value = s.id;
+                        option.textContent = `${s.first_name} ${s.last_name}`;
 
-                    if (Array.isArray(students)) {
-                        students.forEach((s) => {
-                            const option = document.createElement("option");
-                            option.value = s.id;
-                            option.textContent = `${s.first_name} ${s.last_name}`;
-                            opt.appendChild(option);
-                        });
-                    } else {
-                        console.error("get_students() did not return an array");
-                    }
+                        if (sel !== undefined && sel === s.id) {
+                            preselect.selected = false;
+                            option.selected = true;
+                        }
+                        opt.appendChild(option);
+                    });
                 } else if (item.opt2 === "Teacher") {
-                    const teachers = await get_teachers();
-                    console.log("teachers =", teachers);
+                    teachers.forEach((s) => {
+                        const option = document.createElement("option");
+                        option.value = s.id;
+                        option.textContent = `${s.first_name} ${s.last_name}`;
 
-                    if (Array.isArray(teachers)) {
-                        teachers.forEach((s) => {
-                            const option = document.createElement("option");
-                            option.value = s.id;
-                            option.textContent = `${s.first_name} ${s.last_name}`;
-                            opt.appendChild(option);
-                        });
-                    } else {
-                        console.error("get_teachers() did not return an array");
-                    }
+                        if (sel !== undefined && sel === s.id) {
+                            preselect.selected = false;
+                            option.selected = true;
+                        }
+                        opt.appendChild(option);
+                    });
                 }
 
                 optDiv.appendChild(opt);
@@ -249,36 +311,49 @@ async function load_questions() {
 
             if (item.opt3) {
                 const opt = document.createElement("select");
+
+                let sel;
+                if (answer.opt1) {
+                    sel = answer.opt;
+                } else {
+                    const preselect = document.createElement("option");
+                    preselect.selected = true;
+                    preselect.disabled = true;
+                    preselect.innerHTML = "Bitte auswählen";
+                    opt.appendChild(preselect);
+                }
+
+                const preselect = document.createElement("option");
+                preselect.selected = true;
+                preselect.disabled = true;
+                preselect.innerHTML = "Bitte auswählen";
+                opt.appendChild(preselect);
                 opt.dataset.opt = 3;
 
                 if (item.opt3 === "Student") {
-                    const students = await get_students();
-                    console.log("students =", students);
+                    students.forEach((s) => {
+                        const option = document.createElement("option");
+                        option.value = s.id;
+                        option.textContent = `${s.first_name} ${s.last_name}`;
 
-                    if (Array.isArray(students)) {
-                        students.forEach((s) => {
-                            const option = document.createElement("option");
-                            option.value = s.id;
-                            option.textContent = `${s.first_name} ${s.last_name}`;
-                            opt.appendChild(option);
-                        });
-                    } else {
-                        console.error("get_students() did not return an array");
-                    }
+                        if (sel !== undefined && sel === s.id) {
+                            preselect.selected = false;
+                            option.selected = true;
+                        }
+                        opt.appendChild(option);
+                    });
                 } else if (item.opt3 === "Teacher") {
-                    const teachers = await get_teachers();
-                    console.log("teachers =", teachers);
+                    teachers.forEach((s) => {
+                        const option = document.createElement("option");
+                        option.value = s.id;
+                        option.textContent = `${s.first_name} ${s.last_name}`;
 
-                    if (Array.isArray(teachers)) {
-                        teachers.forEach((s) => {
-                            const option = document.createElement("option");
-                            option.value = s.id;
-                            option.textContent = `${s.first_name} ${s.last_name}`;
-                            opt.appendChild(option);
-                        });
-                    } else {
-                        console.error("get_teachers() did not return an array");
-                    }
+                        if (sel !== undefined && sel === s.id) {
+                            preselect.selected = false;
+                            option.selected = true;
+                        }
+                        opt.appendChild(option);
+                    });
                 }
 
                 optDiv.appendChild(opt);
@@ -303,8 +378,9 @@ async function save_questions() {
         // const response = await fetch("/api/questions", { headers: headers });
         const questions = document.getElementById("questions");
         const qs = Array.from(questions.children);
+        const s = await get_students_with_email(username);
+
         qs.forEach(async (q) => {
-            const s = await get_students_with_email(username);
             const sid = s[0].id;
             const qid = q.dataset.qid;
             const opts = q.querySelector(".optDiv").querySelectorAll("select");
