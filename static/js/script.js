@@ -18,6 +18,7 @@ if (getCookie("username") !== "" && getCookie("username") !== null) {
     }
 }
 
+// login user
 if (document.getElementById("loginForm") != null) {
     // set cookies on login
     document.getElementById("loginForm").addEventListener("submit", function(event) {
@@ -47,15 +48,15 @@ if (document.getElementById("loginForm") != null) {
     });
 }
 
-if (document.getElementById("logoutBtn") != null) {
+if (document.getElementById("logoutBtn") !== null) {
     document.getElementById("logoutBtn").addEventListener("click", logout);
 }
 
-if (document.getElementById("saveBtn") != null) {
+if (document.getElementById("saveBtn") !== null) {
     document.getElementById("saveBtn").addEventListener("click", save_questions);
 }
 
-if (document.getElementById("questions") != null) {
+if (document.getElementById("questions") !== null) {
     load_questions();
 }
 
@@ -101,6 +102,7 @@ async function get_students() {
     return res.json();
 }
 
+// get student via their email adress (username)
 async function get_students_with_email(email) {
     const authstr = build_authstr();
 
@@ -180,6 +182,7 @@ async function post_answer(a) {
     return res.json();
 }
 
+// load questions into page
 async function load_questions() {
     try {
         const students = await get_students();
@@ -224,6 +227,7 @@ async function load_questions() {
             const optDiv = document.createElement("div");
             optDiv.className = "optDiv";
 
+            // load option selectors
             if (item.opt1) {
                 const opt = document.createElement("select");
 
@@ -374,7 +378,6 @@ async function save_questions() {
     headers.set("Authorization", authstr);
 
     try {
-        // const response = await fetch("/api/questions", { headers: headers });
         const questions = document.getElementById("questions");
         const qs = Array.from(questions.children);
         const s = await get_students_with_email(username);
