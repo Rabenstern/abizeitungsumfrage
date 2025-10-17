@@ -18,6 +18,7 @@ use crate::{
 // function template
 
 pub async fn xyz(db: Data<DatabaseConnection>) -> Result<HttpResponse> {
+    log::debug!("xyz was used");
     ...
     Ok(HttpResponse::Ok().finish())
 }
@@ -25,11 +26,13 @@ pub async fn xyz(db: Data<DatabaseConnection>) -> Result<HttpResponse> {
 
 // API GET ping
 pub async fn get_api() -> Result<HttpResponse> {
+    log::debug!("get_api was used");
     Ok(HttpResponse::Ok().json("Hello, World!"))
 }
 
 // API POST ping
 pub async fn post_api(message: web::Json<PostMessage>) -> Result<HttpResponse> {
+    log::debug!("post_api was used");
     let message = message.into_inner();
     log::debug!("{}", message.message);
     Ok(HttpResponse::Ok().json("message received"))
@@ -37,6 +40,7 @@ pub async fn post_api(message: web::Json<PostMessage>) -> Result<HttpResponse> {
 
 // check if auth data is valid
 pub async fn get_authed(db: Data<DatabaseConnection>, req: HttpRequest) -> Result<HttpResponse> {
+    log::debug!("get_authed was used");
     auth(&db, &req).await?;
 
     Ok(HttpResponse::Ok().finish())
@@ -44,6 +48,7 @@ pub async fn get_authed(db: Data<DatabaseConnection>, req: HttpRequest) -> Resul
 
 // get survey metadata
 /* pub async fn get_meta(cfg: Data<Mutex<Config>>) -> Result<HttpResponse> {
+    log::debug!("get_meta was used");
     let cfg = cfg.lock().map_err(ErrorInternalServerError)?;
     let meta = Meta { title: &cfg.title };
     Ok(HttpResponse::Ok().json(meta))
@@ -56,6 +61,7 @@ pub async fn get_students(
     req: HttpRequest,
     query: web::Query<student::StudentsQuery>,
 ) -> Result<HttpResponse> {
+    log::debug!("get_students was used");
     auth(&db, &req).await?;
 
     let students = Student::find()
@@ -98,6 +104,7 @@ pub async fn get_student(
     req: HttpRequest,
     sid: web::Path<i32>,
 ) -> Result<HttpResponse> {
+    log::debug!("get_student was used");
     auth(&db, &req).await?;
 
     let sid = sid.into_inner();
@@ -117,6 +124,7 @@ pub async fn get_student(
 
 // get a list of teachers
 pub async fn get_teachers(db: Data<DatabaseConnection>, req: HttpRequest) -> Result<HttpResponse> {
+    log::debug!("get_teachers was used");
     auth(&db, &req).await?;
 
     let ts: Vec<teacher::Teacher> = Teacher::find()
@@ -136,6 +144,7 @@ pub async fn get_teacher(
     req: HttpRequest,
     tid: web::Path<i32>,
 ) -> Result<HttpResponse> {
+    log::debug!("get_teacher was used");
     auth(&db, &req).await?;
 
     let tid = tid.into_inner();
@@ -155,6 +164,7 @@ pub async fn get_teacher(
 
 // get a list of questions
 pub async fn get_questions(db: Data<DatabaseConnection>, req: HttpRequest) -> Result<HttpResponse> {
+    log::debug!("get_questions was used");
     auth(&db, &req).await?;
     let qs: Vec<question::Question> = Question::find()
         .all(db.get_ref())
@@ -173,6 +183,7 @@ pub async fn get_question(
     req: HttpRequest,
     qid: web::Path<i32>,
 ) -> Result<HttpResponse> {
+    log::debug!("get_question was used");
     auth(&db, &req).await?;
 
     let qid = qid.into_inner();
@@ -196,6 +207,7 @@ pub async fn get_answers(
     req: HttpRequest,
     query: web::Query<answer::AnswerQuery>,
 ) -> Result<HttpResponse> {
+    log::debug!("get_answers was used");
     auth(&db, &req).await?;
     let answers = Answer::find()
         .all(db.get_ref())
@@ -261,6 +273,7 @@ pub async fn get_answer(
     req: HttpRequest,
     aid: web::Path<i32>,
 ) -> Result<HttpResponse> {
+    log::debug!("get_answer was used");
     auth(&db, &req).await?;
 
     let aid = aid.into_inner();
@@ -284,6 +297,7 @@ pub async fn post_answer(
     req: HttpRequest,
     answer: web::Json<answer::NewAnswer>,
 ) -> Result<HttpResponse> {
+    log::debug!("post_answer was used");
     auth(&db, &req).await?;
 
     let answer = answer.into_inner();
