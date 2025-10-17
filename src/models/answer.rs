@@ -1,4 +1,3 @@
-use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 use crate::entities;
@@ -33,4 +32,10 @@ pub struct NewAnswer {
     pub opt1: Option<i32>,
     pub opt2: Option<i32>,
     pub opt3: Option<i32>,
+}
+
+#[derive(Deserialize)]
+pub struct AnswerQuery {
+    pub sid: Option<i32>,
+    pub qid: Option<i32>,
 }

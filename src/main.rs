@@ -90,6 +90,9 @@ async fn main() -> std::io::Result<()> {
     // otherwise would need to be mutex
     let db = Data::new(db);
 
+    // cfg must be Mutex
+    let cfg = Data::new(Mutex::new(cfg));
+
     log::info!("mounting routes and services...");
     HttpServer::new(move || {
         App::new()
@@ -98,16 +101,17 @@ async fn main() -> std::io::Result<()> {
                     .add(("Content-Security-Policy", "default-src 'self'")),
             )
             .app_data(Data::clone(&db))
+            .app_data(Data::clone(&cfg))
             .route("/api", web::get().to(get_api))
             .route("/api", web::post().to(post_api))
             .route("/api/authed", web::get().to(get_authed))
+            // .route("/api/meta", web::get().to(get_meta))
             .route("/api/students", web::get().to(get_students))
             .route("/api/student/{id}", web::get().to(get_student))
             .route("/api/teachers", web::get().to(get_teachers))
             .route("/api/teacher/{id}", web::get().to(get_teacher))
             .route("/api/questions", web::get().to(get_questions))
             .route("/api/question/{id}", web::get().to(get_question))
-            // .route("/api/question/{id}", web::post().to(post_question))
             .route("/api/answers", web::get().to(get_answers))
             .route("/api/answer/{id}", web::get().to(get_answer))
             .route("/api/answer", web::post().to(post_answer))

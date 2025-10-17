@@ -9,3 +9,8 @@ pub mod teacher;
 pub struct PostMessage {
     pub message: String,
 }
+
+#[derive(Serialize)]
+pub struct Meta {
+    pub title: String,
+}

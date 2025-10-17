@@ -8,14 +8,14 @@ pub struct StudentsQuery {
     pub email: Option<String>,
 }
 
-#[derive(Serialize, Clone)]
+/* #[derive(Serialize, Clone)]
 pub struct Student {
     pub id: i32,
     pub email: String,
     pub token: String,
     pub first_name: String,
     pub last_name: String,
-}
+} */
 
 #[derive(Deserialize, Serialize)]
 pub struct StudentSafe {

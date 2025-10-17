@@ -24,7 +24,7 @@ pub async fn auth(db: &DatabaseConnection, req: &HttpRequest) -> Result<Basic> {
         Ok(i) => Student::find_by_id(i)
             .one(db)
             .await
-            .map_err(|e| ErrorInternalServerError(e))?
+            .map_err(ErrorInternalServerError)?
             .ok_or(ErrorNotFound(format!(
                 "failed to find student via uid: {uid}"
             )))?,
@@ -34,7 +34,7 @@ pub async fn auth(db: &DatabaseConnection, req: &HttpRequest) -> Result<Basic> {
             .filter(student::Column::Email.contains(uid))
             .one(db)
             .await
-            .map_err(|e| ErrorInternalServerError(e))?
+            .map_err(ErrorInternalServerError)?
             .ok_or(ErrorNotFound(format!(
                 "failed to find student via email: {uid}"
             )))?,

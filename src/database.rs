@@ -14,7 +14,7 @@ use crate::{
 
 /// load students into DB from file
 pub async fn load_students(db: &DatabaseConnection, cfg: &Config) -> Result<()> {
-    if let Some(_) = entities::student::Entity::find().one(db).await? {
+    if (entities::student::Entity::find().one(db).await?).is_some() {
         log::info!("DB already has students");
         return Ok(());
     }
@@ -47,7 +47,7 @@ pub async fn load_students(db: &DatabaseConnection, cfg: &Config) -> Result<()> 
 
 /// load teachers into DB from file
 pub async fn load_teachers(db: &DatabaseConnection, cfg: &Config) -> Result<()> {
-    if let Some(_) = entities::teacher::Entity::find().one(db).await? {
+    if (entities::teacher::Entity::find().one(db).await?).is_some() {
         log::info!("DB already has teacher");
         return Ok(());
     }
@@ -77,7 +77,7 @@ pub async fn load_teachers(db: &DatabaseConnection, cfg: &Config) -> Result<()> 
 
 /// load questions into DB from file
 pub async fn load_questions(db: &DatabaseConnection, cfg: &Config) -> Result<()> {
-    if let Some(_) = entities::question::Entity::find().one(db).await? {
+    if (entities::question::Entity::find().one(db).await?).is_some() {
         log::info!("DB already has questions");
         return Ok(());
     }

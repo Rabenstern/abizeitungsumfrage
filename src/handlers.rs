@@ -1,13 +1,15 @@
+// use std::sync::Mutex;
+
 use actix_web::{
     HttpRequest, HttpResponse, Result,
     error::*,
     web::{self, Data},
 };
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
-use std::sync::Mutex;
+use sea_orm::{ActiveModelTrait, DatabaseConnection, EntityTrait, Set};
 
 use crate::{
     auth::auth,
+    // config::Config,
     entities::{self, prelude::*},
     models::*,
 };
@@ -40,6 +42,13 @@ pub async fn get_authed(db: Data<DatabaseConnection>, req: HttpRequest) -> Resul
     Ok(HttpResponse::Ok().finish())
 }
 
+// get survey metadata
+/* pub async fn get_meta(cfg: Data<Mutex<Config>>) -> Result<HttpResponse> {
+    let cfg = cfg.lock().map_err(ErrorInternalServerError)?;
+    let meta = Meta { title: &cfg.title };
+    Ok(HttpResponse::Ok().json(meta))
+} */
+
 // get a list of students
 // optionally filter for a specific email adress
 pub async fn get_students(
@@ -52,16 +61,16 @@ pub async fn get_students(
     let students = Student::find()
         .all(db.get_ref())
         .await
-        .map_err(|e| ErrorInternalServerError(e))?;
+        .map_err(ErrorInternalServerError)?;
 
-    let mut sts = Vec::new();
+    let sts: Vec<student::StudentSafe>;
 
     match &query.email {
         Some(m) => {
             sts = students
                 .iter()
                 .filter(|s| &s.email == m)
-                .map(|s| student::StudentSafe::from_model(s))
+                .map(student::StudentSafe::from_model)
                 .collect();
 
             if sts.is_empty() {
@@ -71,7 +80,7 @@ pub async fn get_students(
         None => {
             sts = students
                 .iter()
-                .map(|s| student::StudentSafe::from_model(s))
+                .map(student::StudentSafe::from_model)
                 .collect();
 
             if sts.is_empty() {
@@ -96,7 +105,7 @@ pub async fn get_student(
     let s = Student::find_by_id(sid)
         .one(db.as_ref())
         .await
-        .map_err(|e| ErrorInternalServerError(e))?
+        .map_err(ErrorInternalServerError)?
         .ok_or(ErrorNotFound(format!(
             "failed to find student via id: {sid}"
         )))?;
@@ -113,9 +122,9 @@ pub async fn get_teachers(db: Data<DatabaseConnection>, req: HttpRequest) -> Res
     let ts: Vec<teacher::Teacher> = Teacher::find()
         .all(db.get_ref())
         .await
-        .map_err(|e| ErrorInternalServerError(e))?
+        .map_err(ErrorInternalServerError)?
         .iter()
-        .map(|t| teacher::Teacher::from_model(t))
+        .map(teacher::Teacher::from_model)
         .collect();
 
     Ok(HttpResponse::Ok().json(ts))
@@ -134,7 +143,7 @@ pub async fn get_teacher(
     let q = Teacher::find_by_id(tid)
         .one(db.as_ref())
         .await
-        .map_err(|e| ErrorInternalServerError(e))?
+        .map_err(ErrorInternalServerError)?
         .ok_or(ErrorNotFound(format!(
             "failed to find teacher via id: {tid}"
         )))?;
@@ -150,9 +159,9 @@ pub async fn get_questions(db: Data<DatabaseConnection>, req: HttpRequest) -> Re
     let qs: Vec<question::Question> = Question::find()
         .all(db.get_ref())
         .await
-        .map_err(|e| ErrorInternalServerError(e))?
+        .map_err(ErrorInternalServerError)?
         .iter()
-        .map(|q| question::Question::from_model(q))
+        .map(question::Question::from_model)
         .collect();
 
     Ok(HttpResponse::Ok().json(qs))
@@ -171,7 +180,7 @@ pub async fn get_question(
     let q = Question::find_by_id(qid)
         .one(db.as_ref())
         .await
-        .map_err(|e| ErrorInternalServerError(e))?
+        .map_err(ErrorInternalServerError)?
         .ok_or(ErrorNotFound(format!(
             "failed to find question via id: {qid}"
         )))?;
@@ -182,15 +191,66 @@ pub async fn get_question(
 }
 
 // get a list of answers
-pub async fn get_answers(db: Data<DatabaseConnection>, req: HttpRequest) -> Result<HttpResponse> {
+pub async fn get_answers(
+    db: Data<DatabaseConnection>,
+    req: HttpRequest,
+    query: web::Query<answer::AnswerQuery>,
+) -> Result<HttpResponse> {
     auth(&db, &req).await?;
-    let ans: Vec<answer::Answer> = Answer::find()
+    let answers = Answer::find()
         .all(db.get_ref())
         .await
-        .map_err(|e| ErrorInternalServerError(e))?
-        .iter()
-        .map(|a| answer::Answer::from_model(a))
-        .collect();
+        .map_err(ErrorInternalServerError)?;
+
+    let ans: Vec<answer::Answer>;
+
+    match (&query.sid, &query.qid) {
+        (Some(sid), Some(qid)) => {
+            ans = answers
+                .iter()
+                .filter(|a| &a.sid == sid)
+                .filter(|a| &a.qid == qid)
+                .map(answer::Answer::from_model)
+                .collect();
+
+            if ans.is_empty() {
+                return Err(ErrorNotFound(
+                    "failed to find answers with sid: {sid} and qid: {qid}",
+                ));
+            } else if ans.len() != 1 {
+                return Err(ErrorInternalServerError("DB has conflicting entries"));
+            }
+        }
+        (Some(sid), None) => {
+            ans = answers
+                .iter()
+                .filter(|a| &a.sid == sid)
+                .map(answer::Answer::from_model)
+                .collect();
+
+            if ans.is_empty() {
+                return Err(ErrorNotFound("failed to find answers with sid: {sid}"));
+            }
+        }
+        (None, Some(qid)) => {
+            ans = answers
+                .iter()
+                .filter(|a| &a.qid == qid)
+                .map(answer::Answer::from_model)
+                .collect();
+
+            if ans.is_empty() {
+                return Err(ErrorNotFound("failed to find answers with qid: {qid}"));
+            }
+        }
+        (None, None) => {
+            ans = answers.iter().map(answer::Answer::from_model).collect();
+
+            if ans.is_empty() {
+                return Err(ErrorNotFound("failed to find answers"));
+            }
+        }
+    }
 
     Ok(HttpResponse::Ok().json(ans))
 }
@@ -208,7 +268,7 @@ pub async fn get_answer(
     let a = Question::find_by_id(aid)
         .one(db.as_ref())
         .await
-        .map_err(|e| ErrorInternalServerError(e))?
+        .map_err(ErrorInternalServerError)?
         .ok_or(ErrorNotFound(format!(
             "failed to find answer via id: {aid}"
         )))?;
@@ -232,9 +292,9 @@ pub async fn post_answer(
     let ans: Vec<answer::Answer> = Answer::find()
         .all(db.as_ref())
         .await
-        .map_err(|e| ErrorInternalServerError(e))?
+        .map_err(ErrorInternalServerError)?
         .iter()
-        .map(|a| answer::Answer::from_model(a))
+        .map(answer::Answer::from_model)
         .collect();
 
     // find answers of user with sid to question with qid
@@ -244,7 +304,7 @@ pub async fn post_answer(
         .filter(|a| a.qid == answer.qid)
         .collect();
 
-    if ans.len() == 0 {
+    if ans.is_empty() {
         let an = entities::answer::ActiveModel {
             sid: Set(answer.sid),
             qid: Set(answer.qid),
@@ -256,22 +316,21 @@ pub async fn post_answer(
 
         an.insert(db.as_ref())
             .await
-            .map_err(|e| ErrorInternalServerError(e))?;
+            .map_err(ErrorInternalServerError)?;
     } else if ans.len() == 1 {
         let an = ans[0];
-        let mut an = entities::answer::ActiveModel {
+        let an = entities::answer::ActiveModel {
             id: Set(an.id),
             sid: Set(an.sid),
             qid: Set(an.qid),
             opt1: Set(answer.opt1),
             opt2: Set(answer.opt2),
             opt3: Set(answer.opt3),
-            ..Default::default()
         };
 
         an.update(db.as_ref())
             .await
-            .map_err(|e| ErrorInternalServerError(e))?;
+            .map_err(ErrorInternalServerError)?;
     } else {
         return Err(ErrorInternalServerError("DB has conflicting entries"));
     }
