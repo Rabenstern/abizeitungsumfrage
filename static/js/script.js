@@ -4,6 +4,11 @@
 // token: "27a1ee4411f01912693e7e37295b1cf0b4eadf9f3bcdfbdefa125342431ddee2"
 // authstr: Basic bXVzdGVyZnJhdS5tYXhpQGdkYi5sZXJuc2F4LmRlOjI3YTFlZTQ0MTFmMDE5MTI2OTNlN2UzNzI5NWIxY2YwYjRlYWRmOWYzYmNkZmJkZWZhMTI1MzQyNDMxZGRlZTI=
 
+// WARNING! This is terrible JS code!
+// I had no JS experience and was under time pressure.
+// PRs are very welcome!
+// https://github.com/Rabenstern/abizeitungsumfrage
+
 // set greeting
 if (getCookie("username") !== "" && getCookie("username") !== null) {
     const greeting = document.getElementById("greeting");
@@ -204,13 +209,13 @@ async function load_questions() {
 
         const questions = document.getElementById("questions");
 
-        // fill student list
+        // build questions
         data.forEach(async (item) => {
             const question = document.createElement("div");
             question.className = "question";
             question.dataset.qid = item.id;
 
-            const answer = answers.filter((a) => a.qid == item.id)[0];
+            const answer = answers.filter((a) => a.qid === item.id)[0];
 
             const q = document.createElement("h2");
             q.textContent = item.q;
@@ -224,7 +229,7 @@ async function load_questions() {
 
                 let sel;
                 if (answer.opt1) {
-                    sel = answer.opt;
+                    sel = answer.opt1;
                 } else {
                     const preselect = document.createElement("option");
                     preselect.selected = true;
@@ -242,7 +247,6 @@ async function load_questions() {
                         option.textContent = `${s.first_name} ${s.last_name}`;
 
                         if (typeof sel !== undefined && sel === s.id) {
-                            preselect.selected = false;
                             option.selected = true;
                         }
                         opt.appendChild(option);
@@ -254,7 +258,6 @@ async function load_questions() {
                         option.textContent = `${s.first_name} ${s.last_name}`;
 
                         if (sel !== undefined && sel === s.id) {
-                            preselect.selected = false;
                             option.selected = true;
                         }
                         opt.appendChild(option);
@@ -268,8 +271,8 @@ async function load_questions() {
                 const opt = document.createElement("select");
 
                 let sel;
-                if (answer.opt1) {
-                    sel = answer.opt;
+                if (answer.opt2) {
+                    sel = answer.opt2;
                 } else {
                     const preselect = document.createElement("option");
                     preselect.selected = true;
@@ -287,7 +290,6 @@ async function load_questions() {
                         option.textContent = `${s.first_name} ${s.last_name}`;
 
                         if (sel !== undefined && sel === s.id) {
-                            preselect.selected = false;
                             option.selected = true;
                         }
                         opt.appendChild(option);
@@ -299,7 +301,6 @@ async function load_questions() {
                         option.textContent = `${s.first_name} ${s.last_name}`;
 
                         if (sel !== undefined && sel === s.id) {
-                            preselect.selected = false;
                             option.selected = true;
                         }
                         opt.appendChild(option);
@@ -313,8 +314,8 @@ async function load_questions() {
                 const opt = document.createElement("select");
 
                 let sel;
-                if (answer.opt1) {
-                    sel = answer.opt;
+                if (answer.opt3) {
+                    sel = answer.opt3;
                 } else {
                     const preselect = document.createElement("option");
                     preselect.selected = true;
@@ -337,7 +338,6 @@ async function load_questions() {
                         option.textContent = `${s.first_name} ${s.last_name}`;
 
                         if (sel !== undefined && sel === s.id) {
-                            preselect.selected = false;
                             option.selected = true;
                         }
                         opt.appendChild(option);
@@ -349,7 +349,6 @@ async function load_questions() {
                         option.textContent = `${s.first_name} ${s.last_name}`;
 
                         if (sel !== undefined && sel === s.id) {
-                            preselect.selected = false;
                             option.selected = true;
                         }
                         opt.appendChild(option);
@@ -410,9 +409,9 @@ async function save_questions() {
             const a = {
                 sid: parseInt(sid),
                 qid: parseInt(qid),
-                opt1: parseInt(opt1),
-                opt2: parseInt(opt2),
-                opt3: parseInt(opt3),
+                opt1: parseInt(opt1) || null,
+                opt2: parseInt(opt2) || null,
+                opt3: parseInt(opt3) || null,
             };
 
             post_answer(a);
