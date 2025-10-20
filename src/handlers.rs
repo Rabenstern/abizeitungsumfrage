@@ -225,11 +225,7 @@ pub async fn get_answers(
                 .map(answer::Answer::from_model)
                 .collect();
 
-            if ans.is_empty() {
-                return Err(ErrorNotFound(
-                    "failed to find answers with sid: {sid} and qid: {qid}",
-                ));
-            } else if ans.len() != 1 {
+            if ans.len() > 1 {
                 return Err(ErrorInternalServerError("DB has conflicting entries"));
             }
         }
@@ -239,10 +235,6 @@ pub async fn get_answers(
                 .filter(|a| &a.sid == sid)
                 .map(answer::Answer::from_model)
                 .collect();
-
-            if ans.is_empty() {
-                return Err(ErrorNotFound("failed to find answers with sid: {sid}"));
-            }
         }
         (None, Some(qid)) => {
             ans = answers
@@ -250,17 +242,9 @@ pub async fn get_answers(
                 .filter(|a| &a.qid == qid)
                 .map(answer::Answer::from_model)
                 .collect();
-
-            if ans.is_empty() {
-                return Err(ErrorNotFound("failed to find answers with qid: {qid}"));
-            }
         }
         (None, None) => {
             ans = answers.iter().map(answer::Answer::from_model).collect();
-
-            if ans.is_empty() {
-                return Err(ErrorNotFound("failed to find answers"));
-            }
         }
     }
 
