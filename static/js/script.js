@@ -232,7 +232,7 @@ async function load_questions() {
                 const opt = document.createElement("select");
 
                 let sel;
-                if (answer.opt1) {
+                if (answer && answer.opt1) {
                     sel = answer.opt1;
                 } else {
                     const preselect = document.createElement("option");
@@ -275,7 +275,7 @@ async function load_questions() {
                 const opt = document.createElement("select");
 
                 let sel;
-                if (answer.opt2) {
+                if (answer && answer.opt2) {
                     sel = answer.opt2;
                 } else {
                     const preselect = document.createElement("option");
@@ -318,7 +318,7 @@ async function load_questions() {
                 const opt = document.createElement("select");
 
                 let sel;
-                if (answer.opt3) {
+                if (answer && answer.opt3) {
                     sel = answer.opt3;
                 } else {
                     const preselect = document.createElement("option");
