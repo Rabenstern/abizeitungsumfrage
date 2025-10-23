@@ -4,6 +4,7 @@
 *.log
 *.json
 .env
+*.out
 
 
 # Added by cargo
