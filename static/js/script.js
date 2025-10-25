@@ -33,7 +33,7 @@ if (document.getElementById("loginForm") != null) {
         fetch("/api/authed", { headers: headers })
             .then((response) => {
                 if (!response.ok) {
-                    alert("Konnte nicht authentifizieren, bitte überprüfe deine Anmeldedaten");
+                    alert("Konnte nicht authentifizieren, bitte überprüfe deine Anmeldedaten ⚠️");
                     throw new Error("Network response was not ok: ", response.status);
                 }
 
@@ -417,7 +417,13 @@ async function save_questions() {
                 opt3: parseInt(opt3) || null,
             };
 
-            post_answer(a);
+            const res = await post_answer(a);
+
+            if (!res.ok) {
+                alert("Antworten konnten nicht gespeichert werden. ⚠️");
+            } else {
+                alert("Antworten erfolgreich gespeichert! 🎉")
+            }
         })
     } catch (error) {
         console.error("Error:", error);
