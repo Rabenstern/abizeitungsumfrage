@@ -189,16 +189,43 @@ async function load_questions() {
         if (!Array.isArray(students)) {
             console.error("get_students() did not return an array");
         }
+        students.sort(function(a, b) {
+            if (a.last_name < b.last_name) {
+                return -1;
+            }
+            if (a.last_name > b.last_name) {
+                return 1;
+            }
+            return 0;
+        });
 
         const teachers = await get_teachers();
         if (!Array.isArray(teachers)) {
             console.error("get_teachers() did not return an array");
         }
+        teachers.sort(function(a, b) {
+            if (a.last_name < b.last_name) {
+                return -1;
+            }
+            if (a.last_name > b.last_name) {
+                return 1;
+            }
+            return 0;
+        });
 
         const data = await get_questions();
         if (!Array.isArray(data)) {
             console.error("get_questions() did not return an array");
         }
+        data.sort(function(a, b) {
+            if (a.id < b.id) {
+                return -1;
+            }
+            if (a.id > b.id) {
+                return 1;
+            }
+            return 0;
+        });
 
         // get current student
         const username = getCookie("username");
