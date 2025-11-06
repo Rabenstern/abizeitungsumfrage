@@ -3,8 +3,10 @@
 *.db
 *.log
 *.json
-.env
 *.out
+*.old
+
+.env
 
 
 # Added by cargo
