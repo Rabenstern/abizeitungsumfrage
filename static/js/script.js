@@ -275,7 +275,7 @@ async function load_questions() {
                     students.forEach((s) => {
                         const option = document.createElement("option");
                         option.value = s.id;
-                        option.textContent = `${s.first_name} ${s.last_name}`;
+                        option.textContent = `${s.last_name}, ${s.first_name}`;
 
                         if (typeof sel !== undefined && sel === s.id) {
                             option.selected = true;
@@ -286,7 +286,7 @@ async function load_questions() {
                     teachers.forEach((s) => {
                         const option = document.createElement("option");
                         option.value = s.id;
-                        option.textContent = `${s.first_name} ${s.last_name}`;
+                        option.textContent = `${s.last_name}, ${s.first_name}`;
 
                         if (sel !== undefined && sel === s.id) {
                             option.selected = true;
@@ -318,7 +318,7 @@ async function load_questions() {
                     students.forEach((s) => {
                         const option = document.createElement("option");
                         option.value = s.id;
-                        option.textContent = `${s.first_name} ${s.last_name}`;
+                        option.textContent = `${s.last_name}, ${s.first_name}`;
 
                         if (sel !== undefined && sel === s.id) {
                             option.selected = true;
@@ -329,7 +329,7 @@ async function load_questions() {
                     teachers.forEach((s) => {
                         const option = document.createElement("option");
                         option.value = s.id;
-                        option.textContent = `${s.first_name} ${s.last_name}`;
+                        option.textContent = `${s.last_name}, ${s.first_name}`;
 
                         if (sel !== undefined && sel === s.id) {
                             option.selected = true;
@@ -366,7 +366,7 @@ async function load_questions() {
                     students.forEach((s) => {
                         const option = document.createElement("option");
                         option.value = s.id;
-                        option.textContent = `${s.first_name} ${s.last_name}`;
+                        option.textContent = `${s.last_name}, ${s.first_name}`;
 
                         if (sel !== undefined && sel === s.id) {
                             option.selected = true;
@@ -377,7 +377,7 @@ async function load_questions() {
                     teachers.forEach((s) => {
                         const option = document.createElement("option");
                         option.value = s.id;
-                        option.textContent = `${s.first_name} ${s.last_name}`;
+                        option.textContent = `${s.last_name}, ${s.first_name}`;
 
                         if (sel !== undefined && sel === s.id) {
                             option.selected = true;
