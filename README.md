@@ -55,7 +55,9 @@ In addition you will need the following in your `.env`:
 
 ```
 TOKEN_SALT="random string"
-ADMIN_EMAIL="example@email.org"
+ADMIN_EMAIL_ADDR="example@email.org"
+ADMIN_EMAIL_PW="password"
+SMTP_SERVER="smtp.email.org"
 ```
 
 To start the server run **one** of these in your shell:
@@ -66,3 +68,11 @@ To start the server run **one** of these in your shell:
 ./run.sh -r   # for release build
 ./run.sh -dr  # for detached release build
 ```
+
+If you wish to send emails to the participants automatically, you need to add the `scripts/sendmail.txt` file:
+
+```txt
+Hello, here's your token: {token}
+```
+
+An email will be sent to every student in the DB and `{token}` will be replaced with their token in the actual email.
