@@ -7,6 +7,9 @@
 *.old
 
 .env
+config.toml
+
+/scripts/sendmail.txt
 
 
 # Added by cargo

@@ -1,9 +1,0 @@
-title = "GDB Jahrgang '26"
-
-[files]
-students_file = "students.csv"
-teachers_file = "teachers.csv"
-question_file = "questions.csv"
-
-[db]
-database_url = "sqlite://./database.db?mode=rwc"
