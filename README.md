@@ -55,10 +55,14 @@ In addition you will need the following in your `.env`:
 
 ```
 TOKEN_SALT="random string"
+ADMIN_EMAIL="example@email.org"
 ```
 
-To start the server run this in your shell:
+To start the server run **one** of these in your shell:
 
 ```bash
-RUST_LOG=trace cargo run  # runs server with trace level logging
+./run.sh      # for testing
+./run.sh -d   # for detached process (nohup)
+./run.sh -r   # for release build
+./run.sh -dr  # for detached release build
 ```
