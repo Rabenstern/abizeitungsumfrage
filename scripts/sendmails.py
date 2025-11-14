@@ -42,5 +42,5 @@ with smtplib.SMTP_SSL(smtp_server, 465, context=context) as server:
         server.sendmail(
             from_address,
             email,
-            message.format(token=token),
+            message.format(token=token).encode("utf-8"),
         )
